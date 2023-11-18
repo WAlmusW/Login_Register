@@ -31,7 +31,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool isRegistered = false;
-  String _initialRoute = "/";
 
   @override
   void initState() {
@@ -40,27 +39,29 @@ class _MyAppState extends State<MyApp> {
       setState(() {
         isRegistered = status;
         print(isRegistered);
-        if (isRegistered) {
-          setState(() {
-            _initialRoute = "/login";
-          });
-        }
-        print(_initialRoute);
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    Widget homeWidget;
+
+    if (isRegistered) {
+      homeWidget = LoginPage();
+    } else {
+      homeWidget = RegisterPage();
+    }
+
     return MaterialApp(
       title: 'Login Register',
       theme: ThemeData(
         brightness: Brightness.dark,
         primarySwatch: Colors.blue,
       ),
-      initialRoute: _initialRoute,
+      home: homeWidget,
       routes: {
-        '/': (context) => RegisterPage(),
+        '/register': (context) => RegisterPage(),
         '/login': (context) => LoginPage(),
         '/dashboard': (context) => DashboardPage(),
       },

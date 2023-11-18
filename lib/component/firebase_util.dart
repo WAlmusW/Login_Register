@@ -64,11 +64,11 @@ class FirebaseUtil {
       bool isLoggedIn = false;
       for (QueryDocumentSnapshot document in querySnapshot.docs) {
         // Access the "device_id" field for each user
-        String username = document['username'];
-        String password = document['password'];
+        String _username = document['username'];
+        String _password = document['password'];
 
         // If the device ID matches, consider it registered
-        if (username == username && password == password) {
+        if (username == _username && password == _password) {
           isLoggedIn = true;
           print("debug check");
           break; // No need to continue checking
