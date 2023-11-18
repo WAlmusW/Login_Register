@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:login_register_/firebase_options.dart';
 
 class DashboardPage extends StatelessWidget {
   @override
@@ -18,8 +20,7 @@ class DashboardPage extends StatelessWidget {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(
-                    context, '/register'); // Navigate to register.dart
+                Navigator.pushNamed(context, '/login');
               },
               child: Text('Logout'),
             ),
