@@ -1,4 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_udid/flutter_udid.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:convert';
+import 'dart:async';
+import 'package:http/http.dart' as http;
+import 'package:flutter_udid/flutter_udid.dart';
+
+import 'package:login_register_/component/firebase_util.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -8,8 +17,22 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  String username = '';
-  String password = '';
+  late final TextEditingController _username;
+  late final TextEditingController _password;
+
+  @override
+  void initState() {
+    _username = TextEditingController();
+    _password = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _username.dispose();
+    _password.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,50 +46,51 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              TextFormField(
+              TextField(
+                controller: _username,
                 decoration: InputDecoration(
+                  hintText: "Enter your username here",
                   labelText: 'Username',
                   prefixIcon: Icon(Icons.email),
                 ),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter your Username';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  setState(() {
-                    username = value!;
-                  });
-                },
+                enableSuggestions: false,
+                autocorrect: false,
               ),
               SizedBox(height: 20),
-              TextFormField(
+              TextField(
+                controller: _password,
                 decoration: InputDecoration(
+                  hintText: "Enter your password here",
                   labelText: 'Password',
                   prefixIcon: Icon(Icons.lock),
                 ),
                 obscureText: true,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter your password';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  setState(() {
-                    password = value!;
-                  });
-                },
+                enableSuggestions: false,
+                autocorrect: false,
               ),
               SizedBox(height: 20),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                 ),
-                onPressed: () {
-                  Navigator.pushNamed(
-                      context, '/dashboard'); // Navigate to dashboard.dart
+                onPressed: () async {
+                  final username = _username.text;
+                  final password = _password.text;
+
+                  try {
+                    print(username + " " + password);
+                    FirebaseUtil.loginUser(username, password, (isLoggedIn) {
+                      if (isLoggedIn) {
+                        print('Login successful $isLoggedIn');
+                        Navigator.pushNamed(context, '/dashboard');
+                      } else {
+                        print(
+                            'Login failed. Check your username and password.');
+                      }
+                    });
+                  } catch (e) {
+                    print("Login failed. Check your username and password");
+                  }
                 },
                 child: Text(
                   'Login',
